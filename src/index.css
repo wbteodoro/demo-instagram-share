@@ -71,6 +71,8 @@ button:focus-visible {
 
 .main-container {
   display: flex;
+  flex-direction: column;
+  
 }
 
 .main-left {

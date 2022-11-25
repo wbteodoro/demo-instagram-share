@@ -38,14 +38,17 @@ function App() {
 
   function exportToPng(dom) {
     domtoimage
-      .toSvg(dom)
-      .then(function (dataUrl) {
+      .toJpeg(dom)
+      .then(async function (dataUrl) {
+        const response = await fetch(dataUrl);
         const img = new Image();
         img.src = dataUrl;
         document.body.appendChild(img);
-        const blob = new Blob([img], { type: 'image/svg+xml' });
-        const generatedFile = new File([blob], 'pic.svg', { type: blob.type });
-        setFile(generatedFile)
+        const blob = await response.blob();
+        const filesArray = new File([blob], 'meme.jpg', { type: "image/jpeg", lastModified: new Date().getTime() });
+        // const blob = new Blob([img], { type: 'image/jpeg' });
+        // const generatedFile = new File([blob], 'pic.jpeg', { type: blob.type });
+        setFile(filesArray)
       })
       .catch(function (error) {
         console.error("oops, something went wrong!", error);
@@ -53,20 +56,18 @@ function App() {
   }
 
   const share = () => {
-    if (navigator.canShare && navigator.canShare({
-      files: [file]
-    })) {
-    navigator.share({
-      files: [file]
-    })
-  }
+      if (navigator.canShare && navigator.canShare({
+        files: [file]
+      })) {
+      navigator.share({
+        files: [file]
+      })
+    }
   }
 
   return (
     <div className="App" ref={container}>
       <button onClick={() => exportToPng(container.current)}>export</button>
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
       <Main />
       <button onClick={share}>share</button>
     </div>
